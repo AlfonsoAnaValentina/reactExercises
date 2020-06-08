@@ -1,3 +1,33 @@
 .App {
   text-align: center;
+  background-color: #cfe8fc;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+.cotizadorWrapper {
+  margin-top: 20px;
+}
+
+.errorImgWrapper {
+  width: 80%;
+  margin: 20px auto;
+}
+
+.errorImg {
+  width: 60%;
+  height: 70%;
+}
+
+.appBar {
+  display: flex;
+}
+
+.wrapper {
+  background-color: #cfe8fc;
+}
+
+.bottomNav {
+  width: 80%;
+  margin: 20px auto;
 }
