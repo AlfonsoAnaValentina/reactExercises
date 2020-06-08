@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import './Moneda.css';
 
 const dolar = ({ cotizacion }) => {
+  const { moneda, precio } = cotizacion;
   return (
     <div>
         <Card className="card">
@@ -13,10 +14,10 @@ const dolar = ({ cotizacion }) => {
               Cotizacion
             </Typography>
             <Typography variant="h5" component="h2">
-              {cotizacion.moneda}
+              {moneda}
             </Typography>
             <Typography variant="body2" component="h1">
-              {cotizacion.precio}
+              {precio}
             </Typography>
           </CardContent>
         </Card>

@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import error404 from './images/404.png';
-
 import './App.css';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
@@ -13,21 +10,24 @@ import Moneda from './Moneda/Moneda';
 
 class App extends Component {
   state = {
+    url: 'http://localhost:4000',
     moneda: 'Dolar',
     cotizacion: {},
     isError: false
   }
   componentDidMount() {
-    this.obtenerCotizacion(this.state.moneda);
-    this.interval = setInterval(() => this.obtenerCotizacion(this.state.moneda), 300000);
+    const { moneda } = this.state;
+    this.obtenerCotizacion(moneda);
+    this.interval = setInterval(() => this.obtenerCotizacion(moneda), 300000);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  obtenerCotizacion(moneda) {
-    fetch(`http://localhost:4000/cotizacion/${moneda || this.state.moneda}`)
+  obtenerCotizacion(monedaNueva) {
+    const { url, moneda } =  this.state;
+    fetch(`${url}/cotizacion/${monedaNueva || moneda}`)
      .then(res => res.json())
      .then((data) => {
        this.setState({ cotizacion: data })
@@ -46,18 +46,19 @@ class App extends Component {
   }
 
   render() {
+    const { isError, cotizacion } = this.state;
     return (
       <div className="App">
-        {this.state.isError ?
+        {isError ?
           <Paper elevation={3} className="errorImgWrapper">
-            <img className="errorImg" src={require('./images/404.png')} />
+            <img alt="404" className="errorImg" src={require('./images/404.png')} />
             <Typography variant="h4" component="h4">
               Oops estamos teniendo problema con nuestro proveedor de datos!
             </Typography>
           </Paper>
           :
           <div className="cotizadorWrapper">
-            <Moneda cotizacion={this.state.cotizacion} />
+            <Moneda cotizacion={cotizacion} />
             <BottomNavigation
               className="bottomNav"
               showLabels
