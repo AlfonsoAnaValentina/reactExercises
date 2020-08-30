@@ -1,0 +1,27 @@
+.card {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.chart-container {
+  width: 100%;
+  height: 500px;
+}
+
+.parse-button-chart {
+  margin-top: 20px!important;
+}
+
+.chart-element {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.error-text {
+  font-size: 20px;
+  color: #ff3333;
+}
+
+.axis-error-text{
+  color: #ff3333;
+}
