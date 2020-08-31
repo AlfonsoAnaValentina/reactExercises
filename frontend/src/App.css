@@ -5,7 +5,7 @@
   overflow-x: hidden;
 }
 
-.cotizadorWrapper {
+.wrapper {
   margin-top: 20px;
 }
 
@@ -21,13 +21,4 @@
 
 .appBar {
   display: flex;
-}
-
-.wrapper {
-  background-color: #eeccff;
-}
-
-.bottomNav {
-  width: 80%;
-  margin: 20px auto;
 }
