@@ -9,23 +9,19 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
-import { useTheme } from '@material-ui/core/styles';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
+import CanvasJSReact from '../assets/canvasjs.react';
 import './Chart.css';
 
-// Generate Sales Data
+
 function createData(data, xAxis, yAxis) {
   const newData = [];
-  const xKey = data[0][xAxis];
-  const yKey = data[0][yAxis];
-  data.forEach((value, key) => {
+  data.map((value, key) => {
     if (key > 0) {
       const newObj = {};
-      newObj[xKey] = value[xAxis];
-      newObj[yKey] = value[yAxis];
-      newData.push(newObj)
+      newObj.x = Number(value[xAxis]);
+      newObj.y = Number(value[yAxis]);
+      newData.push(newObj);
     }
   });
   return newData;
@@ -39,25 +35,37 @@ function csvToJson(csv) {
       csvData.push(columns.split(','));
     });
   }
-  console.log(csvData);
   return csvData;
 }
 
 const Chart = ({ props }) => {
-  const theme = useTheme();
   const [value, setValue] = React.useState('');
   const [error, setError] = React.useState(false);
-  const [errorAxis, setErrorAxis] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [dataParsed, setDataParsed] = React.useState([]);
   const [chartData, setChartData] = React.useState([]);
   const [xAxis, setXAxis] = React.useState(0);
-  const [yAxis, setYAxis] = React.useState(0);
+  const [yAxis, setYAxis] = React.useState(1);
+  const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
+  const options = {
+			animationEnabled: true,
+			theme: "light2",
+			axisY: {
+				title: dataParsed.length !== 0 ? dataParsed[0][yAxis] : "Y",
+			},
+			axisX: {
+				title: dataParsed.length !== 0 ? dataParsed[0][xAxis] : "X",
+			},
+			data: [{
+				type: "line",
+				toolTipContent: "Point {x}: {y}",
+				dataPoints: chartData
+			}]
+		}
 
   const handleChange = (event) => {
     setValue(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleClick = () => {
@@ -89,26 +97,30 @@ const Chart = ({ props }) => {
 
   const renderDataCollector = () => {
     return (
-      <Grid item xs={6}>
+      <Grid item xs={6} sm={5}>
         <Card className="card">
           <CardContent>
-              <TextField
-                id="outlined-multiline-flexible"
-                label="CSV"
-                multiline
-                rowsMax={6}
-                value={value}
-                onChange={handleChange}
-                variant="outlined"
-              />
-              <Button
-                className="parse-button-chart"
-                variant="contained"
-                color="primary"
-                onClick={() => handleClick()}
-              >
-                Parse Data
-              </Button>
+            <Typography color="textSecondary" gutterBottom>
+              CVS Data
+            </Typography>
+            <TextField
+              className="textfield-element"
+              id="outlined-multiline-flexible"
+              label="CSV"
+              multiline
+              rows={6}
+              value={value}
+              onChange={handleChange}
+              variant="outlined"
+            />
+            <Button
+              className="parse-button-chart"
+              variant="contained"
+              color="secondary"
+              onClick={() => handleClick()}
+            >
+              Parse Data
+            </Button>
           </CardContent>
         </Card>
       </Grid>
@@ -118,7 +130,6 @@ const Chart = ({ props }) => {
   const renderAxis = (axis, columns) => {
       const axisIndex = axis === 'X' ? 0 : 1;
       const columnsToRender = columns || [axis];
-      console.log(dataParsed.length !== 0 ? dataParsed[0][axisIndex] : '');
       return (
         <FormControl  variant="outlined" className="formControl chart-element" disabled={!(dataParsed.length !== 0)}>
           <InputLabel id={`${axis}-column`}>{axis}</InputLabel>
@@ -126,7 +137,7 @@ const Chart = ({ props }) => {
             className="chart-element"
             labelId={`${axis}-column`}
             id={`${axis}-column-id`}
-            value={axis}
+            value={axis === 'X' ? xAxis : yAxis}
             onChange={(e) => handleAxisChange(e, axisIndex)}
             label={axis}
           >
@@ -136,26 +147,26 @@ const Chart = ({ props }) => {
               </MenuItem>
           ))}
           </Select>
-          {errorAxis &&
-            <FormHelperText className="axis-error-text">Please Pick another axis</FormHelperText>
-          }
         </FormControl>
       );
   };
 
   return (
     <React.Fragment>
-    <Grid container spacing={2}>
+    <Grid container spacing={3} justify="center">
         {renderDataCollector()}
-        <Grid item xs={6}>
+        <Grid item xs={6} sm={5}>
           <Card className="card">
             <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Axis
+              </Typography>
               {renderAxis('X', dataParsed[0])}
               {renderAxis('Y', dataParsed[0])}
               <Button
                 className="parse-button-chart"
                 variant="contained"
-                color="primary"
+                color="secondary"
                 onClick={() => handleCreateChart()}
               >
                 Create Chart
@@ -163,7 +174,7 @@ const Chart = ({ props }) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12}  sm={12}>
           <Card className="card">
             <CardContent>
               <Typography color="textSecondary" gutterBottom>
@@ -173,21 +184,9 @@ const Chart = ({ props }) => {
                 error ? <div className="error-text">Complete the necessary data first</div> : <CircularProgress color="secondary" />
               :
                 <div className="chart-container">
-                  <ResponsiveContainer>
-                    <LineChart
-                      data={chartData}
-                      margin={{
-                        top: 16,
-                        right: 16,
-                        bottom: 0,
-                        left: 24,
-                      }}
-                    >
-                      <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
-                      <YAxis stroke={theme.palette.text.secondary} />
-                      <Line type="monotone" dataKey="amount" stroke={theme.palette.primary.main} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
+                <CanvasJSChart options = {options}
+                  /* onRef={ref => this.chart = ref} */
+                />
                 </div>
               }
             </CardContent>

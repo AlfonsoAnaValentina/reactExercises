@@ -5,7 +5,7 @@
   overflow-x: hidden;
 }
 
-.cotizadorWrapper {
+.wrapper {
   margin-top: 20px;
 }
 
@@ -17,17 +17,4 @@
 .errorImg {
   width: 60%;
   height: 70%;
-}
-
-.appBar {
-  display: flex;
-}
-
-.wrapper {
-  background-color: #eeccff;
-}
-
-.bottomNav {
-  width: 80%;
-  margin: 20px auto;
 }
